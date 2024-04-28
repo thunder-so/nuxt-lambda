@@ -13,9 +13,9 @@
   "main": "index.js",
   "types": "index.d.ts",
   "bin": {
-    "cdk-nuxt-init-server": "lib/cli/init-server.js",
-    "cdk-nuxt-deploy-server": "lib/cli/deploy-server.js",
-    "cdk-nuxt-destroy-server": "lib/cli/destroy-server.js"
+    "cdk-nuxt-init-server": "lib/cli/init-server.mjs",
+    "cdk-nuxt-deploy-server": "lib/cli/deploy-server.mjs",
+    "cdk-nuxt-destroy-server": "lib/cli/destroy-server.mjs"
   },
   "scripts": {
     "build": "tsc"
