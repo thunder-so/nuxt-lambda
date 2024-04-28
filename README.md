@@ -31,6 +31,12 @@ yarn add ts-node typescript --dev # To compile the CDK stacks via typescript
 yarn add aws-cdk@2.128.0 --dev # CDK cli with this exact version for the deployment
 ```
 
+```bash
+bun add git@github.com:thunder-so/cdk-nuxt.git --dev
+bun add ts-node typescript --dev
+bun add aws-cdk@2.139.0 --dev 
+```
+
 ## Setup
 
 1. Set the Nitro preset on your Nuxt configuration file (`nuxt.config.js`) to `aws-lambda`:
@@ -54,6 +60,10 @@ yarn add aws-cdk@2.128.0 --dev # CDK cli with this exact version for the deploym
 
    ```bash
    node_modules/.bin/cdk-nuxt-init-server
+   ```
+
+   ```bash
+   bunx cdk-nuxt-init-server
    ```
 
    > :warning: It's recommended using a `.env` file or another secrets file to import the sensitive secrets into the `stack/index.ts` file.
