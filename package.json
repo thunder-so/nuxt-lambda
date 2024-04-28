@@ -4,7 +4,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ferdinandfrank/cdk-nuxt.git"
+    "url": "https://github.com/thunder-so/cdk-nuxt.git"
   },
   "files": [
     "lib",
@@ -14,31 +14,22 @@
   "types": "index.d.ts",
   "bin": {
     "cdk-nuxt-init-server": "lib/cli/init-server.js",
-    "cdk-nuxt-init-static": "lib/cli/init-static.js",
     "cdk-nuxt-deploy-server": "lib/cli/deploy-server.js",
-    "cdk-nuxt-destroy-server": "lib/cli/destroy-server.js",
-    "cdk-nuxt-deploy-static": "lib/cli/deploy-static.js"
+    "cdk-nuxt-destroy-server": "lib/cli/destroy-server.js"
   },
   "scripts": {
-    "build": "tsc",
-    "release": "yarn run build && yarn version && git push --follow-tags"
+    "build": "tsc"
   },
   "devDependencies": {
-    "@types/node": "^18.18.6",
+    "@types/node": "^20.12.7",
     "fs": "^0.0.1-security",
-    "ts-node": "^10.5.0",
-    "typescript": "^5.3.3"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
   },
   "dependencies": {
-    "@aws-cdk/aws-glue-alpha": "2.128.0-alpha.0",
-    "aws-cdk": "2.128.0",
-    "aws-cdk-lib": "2.128.0",
-    "constructs": "^10.2.31",
+    "aws-cdk": "2.139.0",
+    "aws-cdk-lib": "2.139.0",
+    "constructs": "^10.3.0",
     "shelljs": "^0.8.5"
-  },
-  "peerDependencies": {
-    "aws-cdk": "2.128.0",
-    "ts-node": "^10.5.0",
-    "typescript": "^5.3.3"
   }
 }

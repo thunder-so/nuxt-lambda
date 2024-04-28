@@ -38,7 +38,6 @@ import {LambdaFunction} from "aws-cdk-lib/aws-events-targets";
 import * as path from "path";
 import {writeFileSync} from "fs";
 import {NuxtServerAppStackProps} from "./NuxtServerAppStackProps";
-import {CloudFrontAccessLogsAnalysis} from "../access-logs-analysis/CloudFrontAccessLogsAnalysis";
 import {HttpLambdaIntegration} from "aws-cdk-lib/aws-apigatewayv2-integrations";
 import {DomainName, EndpointType, HttpApi, SecurityPolicy} from "aws-cdk-lib/aws-apigatewayv2";
 
@@ -141,11 +140,6 @@ export class NuxtServerAppStack extends Stack {
         this.cdnAccessIdentity = this.createCdnAccessIdentity();
         this.staticAssetsBucket = this.createStaticAssetsBucket();
 
-        if (props.enableAccessLogsAnalysis) {
-            this.accessLogsBucket = this.createAccessLogsBucket();
-            this.createAccessLogsAnalysis(props);
-        }
-
         if (props.enableSitemap) {
             this.sitemapBucket = this.createSitemapBucket();
         }
@@ -158,10 +152,6 @@ export class NuxtServerAppStack extends Stack {
         this.configureDeployments();
         this.createDnsRecords(props);
         this.createAppPingRule(props);
-
-        // Static assets cleanup resources
-        this.cleanupLambdaFunction = this.createCleanupLambdaFunction(props);
-        this.createCleanupTriggerRule();
     }
 
     /**
@@ -265,37 +255,37 @@ export class NuxtServerAppStack extends Stack {
      * Note that we use the bundled AWS SDK for Node to avoid the need for a custom layer
      * which restricts the consumer to a specific yarn or npm version.
      */
-    private createCleanupLambdaFunction(props: NuxtServerAppStackProps): Function {
-        const functionName: string = `${this.resourceIdPrefix}-cleanup-function`;
-        const functionDirPath = path.join(__dirname, '../../functions/assets-cleanup');
+    // private createCleanupLambdaFunction(props: NuxtServerAppStackProps): Function {
+    //     const functionName: string = `${this.resourceIdPrefix}-cleanup-function`;
+    //     const functionDirPath = path.join(__dirname, '../../functions/assets-cleanup');
 
-        const result: Function = new Function(this, functionName, {
-            functionName: functionName,
-            description: `Auto-deletes the outdated static assets in the ${this.staticAssetsBucket.bucketName} S3 bucket.`,
-            runtime: Runtime.NODEJS_20_X,
-            architecture: Architecture.ARM_64,
-            handler: 'index.handler',
-            code: Code.fromAsset(`${functionDirPath}/build/app`, {
-                exclude: ['*.d.ts']
-            }),
-            timeout: Duration.minutes(5),
-            memorySize: 128,
-            logRetention: RetentionDays.TWO_WEEKS,
-            environment: {
-                STATIC_ASSETS_BUCKET: this.staticAssetsBucket.bucketName,
-                OUTDATED_ASSETS_RETENTION_DAYS: `${props.outdatedAssetsRetentionDays ?? 30}`,
-                ENVIRONMENT: props.environment,
-                AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
-                NODE_OPTIONS: '--enable-source-maps',
-            },
-        });
+    //     const result: Function = new Function(this, functionName, {
+    //         functionName: functionName,
+    //         description: `Auto-deletes the outdated static assets in the ${this.staticAssetsBucket.bucketName} S3 bucket.`,
+    //         runtime: Runtime.NODEJS_20_X,
+    //         architecture: Architecture.ARM_64,
+    //         handler: 'index.handler',
+    //         code: Code.fromAsset(`${functionDirPath}/build/app`, {
+    //             exclude: ['*.d.ts']
+    //         }),
+    //         timeout: Duration.minutes(5),
+    //         memorySize: 128,
+    //         logRetention: RetentionDays.TWO_WEEKS,
+    //         environment: {
+    //             STATIC_ASSETS_BUCKET: this.staticAssetsBucket.bucketName,
+    //             OUTDATED_ASSETS_RETENTION_DAYS: `${props.outdatedAssetsRetentionDays ?? 30}`,
+    //             ENVIRONMENT: props.environment,
+    //             AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+    //             NODE_OPTIONS: '--enable-source-maps',
+    //         },
+    //     });
 
-        // grant function access to S3 bucket
-        this.staticAssetsBucket.grantRead(result);
-        this.staticAssetsBucket.grantDelete(result);
+    //     // grant function access to S3 bucket
+    //     this.staticAssetsBucket.grantRead(result);
+    //     this.staticAssetsBucket.grantDelete(result);
 
-        return result;
-    }
+    //     return result;
+    // }
 
     /**
      * Creates the API gateway to make the Nuxt app render Lambda function publicly available.
@@ -356,7 +346,7 @@ export class NuxtServerAppStack extends Stack {
             additionalBehaviors: this.setupCloudFrontRouting(props),
             priceClass: PriceClass.PRICE_CLASS_100, // Use only North America and Europe
             logBucket: this.accessLogsBucket,
-            logFilePrefix: props.enableAccessLogsAnalysis ? CloudFrontAccessLogsAnalysis.getLogFilePrefix() : undefined,
+            logFilePrefix: `${cdnName}-logs`,
             logIncludesCookies: true,
         });
     }
@@ -621,43 +611,32 @@ export class NuxtServerAppStack extends Stack {
      *
      * @private
      */
-    private createCleanupTriggerRule(): void {
-        new Rule(this, `${this.resourceIdPrefix}-scheduler-rule`, {
-            ruleName: `${this.resourceIdPrefix}-scheduler`,
-            description: `Triggers a cleanup of the outdated static assets at the ${this.staticAssetsBucket.bucketName} S3 bucket.`,
-            enabled: true,
-            schedule: Schedule.cron({weekDay: '3', hour: '3', minute: '30'}),
-            targets: [new LambdaFunction(this.cleanupLambdaFunction)],
-        });
-    }
+    // private createCleanupTriggerRule(): void {
+    //     new Rule(this, `${this.resourceIdPrefix}-scheduler-rule`, {
+    //         ruleName: `${this.resourceIdPrefix}-scheduler`,
+    //         description: `Triggers a cleanup of the outdated static assets at the ${this.staticAssetsBucket.bucketName} S3 bucket.`,
+    //         enabled: true,
+    //         schedule: Schedule.cron({weekDay: '3', hour: '3', minute: '30'}),
+    //         targets: [new LambdaFunction(this.cleanupLambdaFunction)],
+    //     });
+    // }
 
     /**
      * Creates a S3 bucket to store the access logs of the CloudFront distribution.
      */
-    private createAccessLogsBucket(): Bucket {
-        const bucketName = `${this.resourceIdPrefix}-access-logs`;
-        const bucket = new Bucket(this, bucketName, {
-            bucketName,
-            blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
-            objectOwnership: ObjectOwnership.BUCKET_OWNER_PREFERRED,
-            // When the stack is destroyed, we expect everything to be deleted
-            removalPolicy: RemovalPolicy.DESTROY,
-            autoDeleteObjects: true,
-        });
+    // private createAccessLogsBucket(): Bucket {
+    //     const bucketName = `${this.resourceIdPrefix}-access-logs`;
+    //     const bucket = new Bucket(this, bucketName, {
+    //         bucketName,
+    //         blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
+    //         objectOwnership: ObjectOwnership.BUCKET_OWNER_PREFERRED,
+    //         // When the stack is destroyed, we expect everything to be deleted
+    //         removalPolicy: RemovalPolicy.DESTROY,
+    //         autoDeleteObjects: true,
+    //     });
 
-        bucket.grantReadWrite(this.cdnAccessIdentity);
+    //     bucket.grantReadWrite(this.cdnAccessIdentity);
 
-        return bucket;
-    }
-
-    private createAccessLogsAnalysis(props: NuxtServerAppStackProps): CloudFrontAccessLogsAnalysis {
-        if (!this.accessLogsBucket) {
-            throw new Error('Access bucket not set');
-        }
-        return new CloudFrontAccessLogsAnalysis(this, `${this.resourceIdPrefix}-access-logs-analysis`, {
-            bucket: this.accessLogsBucket,
-            resourcePrefix: `${this.resourceIdPrefix}-access-logs`,
-            accessLogCookies: props.accessLogCookies,
-        });
-    }
+    //     return bucket;
+    // }
 }
