@@ -1,0 +1,175 @@
+repo_name: thunder-so/cdk-nuxt
+report_id: 3cfc501ee8a0bf535520ac9277e4a082
+version: 0.1
+repo_type: Public
+timestamp: '2024-04-28T09:40:19+00:00'
+requested_by: ferdinandfrank
+provider: github
+branch: master
+detected_tools_count: 13
+tools:
+- name: JavaScript
+  description: Lightweight, interpreted, object-oriented language with first-class
+    functions
+  website_url: https://developer.mozilla.org/en-US/docs/Web/JavaScript
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Languages
+  image_url: https://img.stackshare.io/service/1209/javascript.jpeg
+  detection_source_url: https://github.com/thunder-so/cdk-nuxt
+  detection_source: Repo Metadata
+- name: TypeScript
+  description: A superset of JavaScript that compiles to clean JavaScript output
+  website_url: http://www.typescriptlang.org
+  license: Apache-2.0
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Languages
+  image_url: https://img.stackshare.io/service/1612/bynNY5dJ.jpg
+  detection_source_url: https://github.com/thunder-so/cdk-nuxt
+  detection_source: Repo Metadata
+- name: Node.js
+  description: A platform built on Chrome's JavaScript runtime for easily building
+    fast, scalable network applications
+  website_url: http://nodejs.org/
+  open_source: true
+  hosted_saas: false
+  category: Languages & Frameworks
+  sub_category: Frameworks (Full Stack)
+  image_url: https://img.stackshare.io/service/1011/n1JRsFeB_400x400.png
+  detection_source_url: https://github.com/thunder-so/cdk-nuxt/blob/master/lib/functions/access-logs-analysis/group-by-date/package.json
+  detection_source: lib/functions/access-logs-analysis/group-by-date/package.json
+  last_updated_by: Ferdinand Frank
+  last_updated_on: 2023-11-14 20:49:40.000000000 Z
+- name: Git
+  description: Fast, scalable, distributed revision control system
+  website_url: http://git-scm.com/
+  open_source: true
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Version Control System
+  image_url: https://img.stackshare.io/service/1046/git.png
+  detection_source_url: https://github.com/thunder-so/cdk-nuxt
+  detection_source: Repo Metadata
+- name: GitHub Actions
+  description: Automate your workflow from idea to production
+  website_url: https://github.com/features/actions
+  open_source: false
+  hosted_saas: true
+  category: Build, Test, Deploy
+  sub_category: Continuous Integration
+  image_url: https://img.stackshare.io/service/11563/actions.png
+  detection_source_url: https://github.com/thunder-so/cdk-nuxt/blob/master/.github/workflows/build.yml
+  detection_source: ".github/workflows/build.yml"
+  last_updated_by: Ferdinand Frank
+  last_updated_on: 2024-02-17 08:29:31.000000000 Z
+- name: Yarn
+  description: A new package manager for JavaScript
+  website_url: https://yarnpkg.com/
+  open_source: true
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Front End Package Manager
+  image_url: https://img.stackshare.io/service/5848/44mC-kJ3.jpg
+  detection_source_url: https://github.com/thunder-so/cdk-nuxt/blob/master/lib/functions/access-logs-analysis/group-by-date/yarn.lock
+  detection_source: lib/functions/access-logs-analysis/group-by-date/yarn.lock
+  last_updated_by: Ferdinand Frank
+  last_updated_on: 2023-11-14 20:49:40.000000000 Z
+- name: npm
+  description: The package manager for JavaScript.
+  website_url: https://www.npmjs.com/
+  open_source: false
+  hosted_saas: false
+  category: Build, Test, Deploy
+  sub_category: Front End Package Manager
+  image_url: https://img.stackshare.io/service/1120/lejvzrnlpb308aftn31u.png
+  detection_source_url: https://github.com/thunder-so/cdk-nuxt/blob/master/package.json
+  detection_source: package.json
+  last_updated_by: Ferdinand Frank
+  last_updated_on: 2022-02-07 09:22:50.000000000 Z
+- name: AWS Lambda
+  description: Automatically run code in response to modifications to objects in Amazon
+    S3 buckets, messages in Kinesis streams, or updates in DynamoDB
+  website_url: http://aws.amazon.com/lambda
+  open_source: false
+  hosted_saas: true
+  category: Application Hosting
+  sub_category: Serverless / Task Processing
+  image_url: https://img.stackshare.io/service/1909/aws-lambda.png
+  detection_source_url: https://github.com/thunder-so/cdk-nuxt/blob/master/lib/functions/access-logs-analysis/group-by-date/package.json
+  detection_source: lib/functions/access-logs-analysis/group-by-date/package.json
+  last_updated_by: Ferdinand Frank
+  last_updated_on: 2023-11-14 20:49:40.000000000 Z
+- name: "@types/aws-lambda"
+  description: TypeScript definitions for AWS Lambda
+  package_url: https://www.npmjs.com/@types/aws-lambda
+  version: 8.10.101
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/17868/default_b760b4f955878b0055c02bde0608c2f01e7d4f4f.png
+  detection_source_url: https://github.com/thunder-so/cdk-nuxt/blob/master/lib/functions/access-logs-analysis/group-by-date/yarn.lock
+  detection_source: lib/functions/access-logs-analysis/group-by-date/package.json
+  last_updated_by: Ferdinand Frank
+  last_updated_on: 2024-02-17 20:16:08.000000000 Z
+- name: "@types/node"
+  description: TypeScript definitions for Node.js
+  package_url: https://www.npmjs.com/@types/node
+  version: 18.0.6
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/15809/default_5e5e8ac63beda29f31f1844df64d4b8247570a66.png
+  detection_source_url: https://github.com/thunder-so/cdk-nuxt/blob/master/lib/functions/access-logs-analysis/group-by-date/yarn.lock
+  detection_source: lib/functions/access-logs-analysis/group-by-date/package.json
+  last_updated_by: Ferdinand Frank
+  last_updated_on: 2024-02-17 22:31:05.000000000 Z
+- name: fs
+  description: This package name is not currently in use, but was formerly occupied
+    by another package
+  package_url: https://www.npmjs.com/fs
+  version: 0.0.1
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/16098/default_63a34654baee757196ddff2457bd1c9a0dfb7287.png
+  detection_source_url: https://github.com/thunder-so/cdk-nuxt/blob/master/yarn.lock
+  detection_source: package.json
+  last_updated_by: Ferdinand Frank
+  last_updated_on: 2022-02-07 09:22:50.000000000 Z
+- name: shelljs
+  description: Portable Unix shell commands for Node.js
+  package_url: https://www.npmjs.com/shelljs
+  version: 0.8.5
+  license: BSD-3-Clause
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/15897/default_1d65e37e65b7f80761374f0202776043277d505d.png
+  detection_source_url: https://github.com/thunder-so/cdk-nuxt/blob/master/yarn.lock
+  detection_source: package.json
+  last_updated_by: Ferdinand Frank
+  last_updated_on: 2023-07-17 13:22:17.000000000 Z
+- name: ts-node
+  description: TypeScript execution environment and REPL for node.js
+  package_url: https://www.npmjs.com/ts-node
+  version: 10.9.1
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/15830/default_6743ba96cf149a3c3c68a185199f9705d6eff80e.png
+  detection_source_url: https://github.com/thunder-so/cdk-nuxt/blob/master/lib/functions/access-logs-analysis/group-by-date/yarn.lock
+  detection_source: lib/functions/access-logs-analysis/group-by-date/package.json
+  last_updated_by: Ferdinand Frank
+  last_updated_on: 2024-02-17 22:31:05.000000000 Z
