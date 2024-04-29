@@ -20,22 +20,38 @@ Easily deploy Nuxt 3 applications via CDK on AWS including the following feature
 ## Prerequisites
 
 - You need an [AWS account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/?nc1=h_ls) to create and deploy the required resources for the Nuxt app on AWS.
-- This readme currently relies on using [Yarn](https://yarnpkg.com/) as a package manager. Feel free to use another package manager, but you have to adapt the commands accordingly.
+
+<strike>- This readme currently relies on using [Yarn](https://yarnpkg.com/) as a package manager. Feel free to use another package manager, but you have to adapt the commands accordingly.</strike>
+
+This package uses npm package manager. Bun support is experimental and is known to crash on some machines - use with caution.
+
 
 ## Installation
 
 Install the package and its required dependencies:
+
+```bash
+npm install thunder-so/cdk-nuxt --dev # This forked package
+npm install tsx typescript --dev # This fork uses tsx instead of ts-node
+npm add aws-cdk@2.139.0 --dev # CDK version updated in this fork
+```
+
+Using Bun (experimental):
+
+```bash
+bun add git@github.com:thunder-so/cdk-nuxt.git --dev
+bun add tsx typescript --dev 
+bun add aws-cdk@2.139.0 --dev 
+```
+
+The original package (deprecated):
+
 ```bash
 yarn add cdk-nuxt --dev # The package itself
 yarn add ts-node typescript --dev # To compile the CDK stacks via typescript
 yarn add aws-cdk@2.128.0 --dev # CDK cli with this exact version for the deployment
 ```
 
-```bash
-bun add git@github.com:thunder-so/cdk-nuxt.git --dev
-bun add typescript --dev
-bun add aws-cdk@2.139.0 --dev 
-```
 
 ## Setup
 
@@ -50,20 +66,27 @@ bun add aws-cdk@2.139.0 --dev
     });
     ```
    See https://nitro.unjs.io/deploy/providers/aws for more details.
-2. Remove `"type": "module"` from your `package.json` file, if it exists.
-   This is required to make the CDK stack work. Click [here](https://github.com/ferdinandfrank/cdk-nuxt/issues/3) for details. 
+
+<strike>2. Remove `"type": "module"` from your `package.json` file, if it exists.
+   This is required to make the CDK stack work. Click [here](https://github.com/ferdinandfrank/cdk-nuxt/issues/3) for details.</strike>
+
 3. [Create an AWS account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/?nc1=h_ls), if you don't have one yet. Then login into the AWS console and note the `Account ID`. You will need it in step 7.
 4. [Create a hosted zone in Route53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/AboutHZWorkingWith.html) for the desired domain, if you don't have one yet.<br/>This is required to create DNS records for the domain to make the Nuxt app publicly available on that domain.<br/>On the hosted zone details you should see the `Hosted zone ID` of the hosted zone. You will need it in step 7.
 5. [Request a public **regional** certificate in the AWS Certificate Manager (ACM)](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request-public.html) for the desired domain in your desired region, e.g., `eu-central-1`, and validate it, if you don't have one yet.<br/>This is required to make the Nuxt app accessible via the custom domain and to provide the custom domain to the Nuxt app via the 'Host' header for server side rendering use cases.<br/>Take note of the displayed `ARN` for the certificate. You will need it in step 7.
 6. [Request a public **global** certificate in the AWS Certificate Manager (ACM)](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request-public.html) for the desired domain in `us-east-1` (**global**) and validate it, if you don't have one yet.<br/>This is required to provide the Nuxt app via HTTPS on the public internet.<br/>Take note of the displayed `ARN` for the certificate. You will need it in step 7.<br/>**Important: The certificate must be issued in us-east-1 (global) regardless of the region used for the Nuxt app itself as it will be attached to the Cloudfront distribution which works globally.**
 7. Run the following command to automatically create the required CDK stack entrypoint at `stack/index.ts`. This file defines the config how the Nuxt app will be deployed via CDK. You should adapt the file to the project's needs, especially the props `env.account` (setup step 3), `hostedZoneId` (setup step 4), `regionalTlsCertificateArn` (setup step 5) and `globalTlsCertificateArn` (setup step 6).
 
+
    ```bash
-   node_modules/.bin/cdk-nuxt-init-server
+   npx cdk-nuxt-init-server
    ```
 
    ```bash
    bunx cdk-nuxt-init-server
+   ```
+
+   ```bash
+   node_modules/.bin/cdk-nuxt-init-server
    ```
 
    > :warning: It's recommended using a `.env` file or another secrets file to import the sensitive secrets into the `stack/index.ts` file.
@@ -191,35 +214,50 @@ By running the following script, the Nuxt app will be built automatically via `y
 and the CDK stack will be deployed to AWS.
 
 ```bash
-node_modules/.bin/cdk-nuxt-deploy-server
+npx cdk-nuxt-deploy-server
 ```
 
 ```bash
 bunx cdk-nuxt-deploy-server
 ```
 
+```bash
+node_modules/.bin/cdk-nuxt-deploy-server
+```
+
 Alternatively, you can run the following commands separately to customize the deployment process:
 
 ```bash
-yarn build
-yarn cdk deploy --require-approval never --all --app="yarn ts-node stack/index.ts"
+npm run build
+npx cdk deploy --require-approval never --app "npx tsx stack/index.ts"
 ```
 
 ```bash
 bun run build
-bunx cdk deploy --app "bun run ./stack/index.ts"
+bunx cdk deploy --app "bun run ./stack/index.ts" # bun crashes (1.1.5/Win)
+```
+
+```bash
+yarn build
+yarn cdk deploy --require-approval never --all --app="yarn ts-node stack/index.ts" # ts-node deprecated
+yarn cdk deploy --require-approval never --all --app="yarn tsx stack/index.ts" # Use tsx instead
 ```
 
 ## Destroy the Stack
 
 If you want to destroy the stack and all its resources (including storage, e.g., access logs), run the following script:
 
+
 ```bash
-node_modules/.bin/cdk-nuxt-destroy-server
+npx cdk-nuxt-destroy-server
 ```
 
 ```bash
 bunx cdk-nuxt-destroy-server
+```
+
+```bash
+node_modules/.bin/cdk-nuxt-destroy-server
 ```
 
 ## Reference: Created AWS Resources
@@ -268,18 +306,14 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
         
-      # Enable if using Yarn >= 2  
-      # - name: Enable Corepack for Yarn
-      #   run: corepack enable
-
       - name: Configure Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'yarn'
+          cache: 'npm'
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile # or `yarn install --immutable` for Yarn >= 2
+        run: npm ci
 
       - name: Build and deploy to AWS
         run: node_modules/.bin/cdk-nuxt-deploy-server # Or run a customized deployment, see 'Build and Deploy' section
