@@ -9,9 +9,9 @@
   },
   "files": [
     "lib",
-    "index.d.ts"
+    "index.ts"
   ],
-  "main": "index.js",
+  "main": "index.ts",
   "types": "index.d.ts",
   "bin": {
     "cdk-nuxt-init-server": "lib/cli/init-server.mjs",
