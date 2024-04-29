@@ -33,7 +33,7 @@ yarn add aws-cdk@2.128.0 --dev # CDK cli with this exact version for the deploym
 
 ```bash
 bun add git@github.com:thunder-so/cdk-nuxt.git --dev
-bun add ts-node typescript --dev
+bun add typescript --dev
 bun add aws-cdk@2.139.0 --dev 
 ```
 
@@ -194,11 +194,20 @@ and the CDK stack will be deployed to AWS.
 node_modules/.bin/cdk-nuxt-deploy-server
 ```
 
+```bash
+bunx cdk-nuxt-deploy-server
+```
+
 Alternatively, you can run the following commands separately to customize the deployment process:
 
 ```bash
 yarn build
 yarn cdk deploy --require-approval never --all --app="yarn ts-node stack/index.ts"
+```
+
+```bash
+bun run build
+bunx cdk deploy --app "bun run ./stack/index.ts"
 ```
 
 ## Destroy the Stack
@@ -207,6 +216,10 @@ If you want to destroy the stack and all its resources (including storage, e.g.,
 
 ```bash
 node_modules/.bin/cdk-nuxt-destroy-server
+```
+
+```bash
+bunx cdk-nuxt-destroy-server
 ```
 
 ## Reference: Created AWS Resources
