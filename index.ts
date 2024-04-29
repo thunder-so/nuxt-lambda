@@ -1,2 +1,2 @@
-export {NuxtServerAppStack} from "./lib/stack/server/NuxtServerAppStack"
-export {NuxtServerAppStackProps} from "./lib/stack/server/NuxtServerAppStackProps"
+export { NuxtServerAppStack } from "./lib/stack/server/NuxtServerAppStack"
+export { type NuxtServerAppStackProps } from "./lib/stack/server/NuxtServerAppStackProps"

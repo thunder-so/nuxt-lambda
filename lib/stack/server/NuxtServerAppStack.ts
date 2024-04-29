@@ -1,16 +1,19 @@
+import * as fs from "fs";
+import * as path from "path";
 import {Duration, RemovalPolicy, Stack} from 'aws-cdk-lib';
 import {Construct} from 'constructs';
 import {Certificate} from "aws-cdk-lib/aws-certificatemanager";
 import {
     AllowedMethods,
-    BehaviorOptions,
+    type BehaviorOptions,
     CacheCookieBehavior,
     CachedMethods,
     CacheHeaderBehavior,
     CachePolicy,
     CacheQueryStringBehavior,
-    Distribution, HttpVersion,
-    IOriginAccessIdentity,
+    Distribution, 
+    HttpVersion,
+    type IOriginAccessIdentity,
     OriginAccessIdentity,
     OriginProtocolPolicy,
     PriceClass,
@@ -25,19 +28,16 @@ import {
     BucketEncryption,
     ObjectOwnership
 } from "aws-cdk-lib/aws-s3";
-import {AaaaRecord, ARecord, HostedZone, IHostedZone, RecordTarget} from "aws-cdk-lib/aws-route53";
+import {AaaaRecord, ARecord, HostedZone, type IHostedZone, RecordTarget} from "aws-cdk-lib/aws-route53";
 import {BucketDeployment, Source, StorageClass} from "aws-cdk-lib/aws-s3-deployment";
 import {HttpOrigin, S3Origin} from "aws-cdk-lib/aws-cloudfront-origins";
 import {CloudFrontTarget} from "aws-cdk-lib/aws-route53-targets";
 import {HttpMethod} from "aws-cdk-lib/aws-stepfunctions-tasks";
 import {RetentionDays} from "aws-cdk-lib/aws-logs";
-import {getNuxtAppStaticAssetConfigs, StaticAssetConfig} from "../NuxtAppStaticAssets";
-import * as fs from "fs";
+import {getNuxtAppStaticAssetConfigs, type StaticAssetConfig} from "../NuxtAppStaticAssets";
 import {Rule, RuleTargetInput, Schedule} from "aws-cdk-lib/aws-events";
 import {LambdaFunction} from "aws-cdk-lib/aws-events-targets";
-import * as path from "path";
-import {writeFileSync} from "fs";
-import {NuxtServerAppStackProps} from "./NuxtServerAppStackProps";
+import {type NuxtServerAppStackProps} from "./NuxtServerAppStackProps";
 import {HttpLambdaIntegration} from "aws-cdk-lib/aws-apigatewayv2-integrations";
 import {DomainName, EndpointType, HttpApi, SecurityPolicy} from "aws-cdk-lib/aws-apigatewayv2";
 
@@ -162,7 +162,7 @@ export class NuxtServerAppStack extends Stack {
         const revisionFilePath = `${props.rootDir ?? '.'}/.output/public/app-revision`;
         const appRevision = new Date().toISOString();
 
-        writeFileSync(revisionFilePath, appRevision, {encoding: 'utf-8'});
+        fs.writeFileSync(revisionFilePath, appRevision, {encoding: 'utf-8'});
 
         return appRevision;
     }
@@ -255,37 +255,37 @@ export class NuxtServerAppStack extends Stack {
      * Note that we use the bundled AWS SDK for Node to avoid the need for a custom layer
      * which restricts the consumer to a specific yarn or npm version.
      */
-    // private createCleanupLambdaFunction(props: NuxtServerAppStackProps): Function {
-    //     const functionName: string = `${this.resourceIdPrefix}-cleanup-function`;
-    //     const functionDirPath = path.join(__dirname, '../../functions/assets-cleanup');
+    private createCleanupLambdaFunction(props: NuxtServerAppStackProps): Function {
+        const functionName: string = `${this.resourceIdPrefix}-cleanup-function`;
+        const functionDirPath = path.join(__dirname, '../../functions/assets-cleanup');
 
-    //     const result: Function = new Function(this, functionName, {
-    //         functionName: functionName,
-    //         description: `Auto-deletes the outdated static assets in the ${this.staticAssetsBucket.bucketName} S3 bucket.`,
-    //         runtime: Runtime.NODEJS_20_X,
-    //         architecture: Architecture.ARM_64,
-    //         handler: 'index.handler',
-    //         code: Code.fromAsset(`${functionDirPath}/build/app`, {
-    //             exclude: ['*.d.ts']
-    //         }),
-    //         timeout: Duration.minutes(5),
-    //         memorySize: 128,
-    //         logRetention: RetentionDays.TWO_WEEKS,
-    //         environment: {
-    //             STATIC_ASSETS_BUCKET: this.staticAssetsBucket.bucketName,
-    //             OUTDATED_ASSETS_RETENTION_DAYS: `${props.outdatedAssetsRetentionDays ?? 30}`,
-    //             ENVIRONMENT: props.environment,
-    //             AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
-    //             NODE_OPTIONS: '--enable-source-maps',
-    //         },
-    //     });
+        const result: Function = new Function(this, functionName, {
+            functionName: functionName,
+            description: `Auto-deletes the outdated static assets in the ${this.staticAssetsBucket.bucketName} S3 bucket.`,
+            runtime: Runtime.NODEJS_20_X,
+            architecture: Architecture.ARM_64,
+            handler: 'index.handler',
+            code: Code.fromAsset(`${functionDirPath}/build/app`, {
+                exclude: ['*.d.ts']
+            }),
+            timeout: Duration.minutes(5),
+            memorySize: 128,
+            logRetention: RetentionDays.TWO_WEEKS,
+            environment: {
+                STATIC_ASSETS_BUCKET: this.staticAssetsBucket.bucketName,
+                OUTDATED_ASSETS_RETENTION_DAYS: `${props.outdatedAssetsRetentionDays ?? 30}`,
+                ENVIRONMENT: props.environment,
+                AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+                NODE_OPTIONS: '--enable-source-maps',
+            },
+        });
 
-    //     // grant function access to S3 bucket
-    //     this.staticAssetsBucket.grantRead(result);
-    //     this.staticAssetsBucket.grantDelete(result);
+        // grant function access to S3 bucket
+        this.staticAssetsBucket.grantRead(result);
+        this.staticAssetsBucket.grantDelete(result);
 
-    //     return result;
-    // }
+        return result;
+    }
 
     /**
      * Creates the API gateway to make the Nuxt app render Lambda function publicly available.
@@ -611,32 +611,32 @@ export class NuxtServerAppStack extends Stack {
      *
      * @private
      */
-    // private createCleanupTriggerRule(): void {
-    //     new Rule(this, `${this.resourceIdPrefix}-scheduler-rule`, {
-    //         ruleName: `${this.resourceIdPrefix}-scheduler`,
-    //         description: `Triggers a cleanup of the outdated static assets at the ${this.staticAssetsBucket.bucketName} S3 bucket.`,
-    //         enabled: true,
-    //         schedule: Schedule.cron({weekDay: '3', hour: '3', minute: '30'}),
-    //         targets: [new LambdaFunction(this.cleanupLambdaFunction)],
-    //     });
-    // }
+    private createCleanupTriggerRule(): void {
+        new Rule(this, `${this.resourceIdPrefix}-scheduler-rule`, {
+            ruleName: `${this.resourceIdPrefix}-scheduler`,
+            description: `Triggers a cleanup of the outdated static assets at the ${this.staticAssetsBucket.bucketName} S3 bucket.`,
+            enabled: true,
+            schedule: Schedule.cron({weekDay: '3', hour: '3', minute: '30'}),
+            targets: [new LambdaFunction(this.cleanupLambdaFunction)],
+        });
+    }
 
     /**
      * Creates a S3 bucket to store the access logs of the CloudFront distribution.
      */
-    // private createAccessLogsBucket(): Bucket {
-    //     const bucketName = `${this.resourceIdPrefix}-access-logs`;
-    //     const bucket = new Bucket(this, bucketName, {
-    //         bucketName,
-    //         blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
-    //         objectOwnership: ObjectOwnership.BUCKET_OWNER_PREFERRED,
-    //         // When the stack is destroyed, we expect everything to be deleted
-    //         removalPolicy: RemovalPolicy.DESTROY,
-    //         autoDeleteObjects: true,
-    //     });
+    private createAccessLogsBucket(): Bucket {
+        const bucketName = `${this.resourceIdPrefix}-access-logs`;
+        const bucket = new Bucket(this, bucketName, {
+            bucketName,
+            blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
+            objectOwnership: ObjectOwnership.BUCKET_OWNER_PREFERRED,
+            // When the stack is destroyed, we expect everything to be deleted
+            removalPolicy: RemovalPolicy.DESTROY,
+            autoDeleteObjects: true,
+        });
 
-    //     bucket.grantReadWrite(this.cdnAccessIdentity);
+        bucket.grantReadWrite(this.cdnAccessIdentity);
 
-    //     return bucket;
-    // }
+        return bucket;
+    }
 }
