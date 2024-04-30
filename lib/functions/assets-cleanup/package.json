@@ -5,7 +5,7 @@
     "license": "UNLICENSED",
     "private": true,
     "scripts": {
-      "build": "tsc --project ./tsconfig.json"
+      "build": "npm ci && tsc --project ./tsconfig.json"
     },
     "devDependencies": {
       "@types/node": "^20.12.7",
