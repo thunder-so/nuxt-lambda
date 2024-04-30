@@ -82,11 +82,6 @@ const appStackProps: NuxtServerAppStackProps = {
     enableSitemap: false,
 
     /**
-     * Whether to enable reporting of CloudFront access logs via Athena.
-     */
-    enableAccessLogsAnalysis: false,
-
-    /**
      * Array of cookie names to include in the access logs (whitelist).
      */
     accessLogCookies: [],

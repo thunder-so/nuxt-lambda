@@ -15,7 +15,7 @@ Easily deploy Nuxt 3 applications via CDK on AWS including the following feature
 - Automatic upload of the build files for CSR and static assets to [S3](https://aws.amazon.com/s3/) with optimized caching rules
 - Scheduled pings of the Nuxt app to keep the Lambda warm for fast responses via [EventBridge](https://aws.amazon.com/eventbridge/) rules
 - Automatic cleanup of outdated static assets and build files
-- Access logs analysis via [Athena](https://aws.amazon.com/athena/) for the Nuxt app's CloudFront distribution
+<strike>- Access logs analysis via [Athena](https://aws.amazon.com/athena/) for the Nuxt app's CloudFront distribution</strike>
 
 ## Prerequisites
 
@@ -25,7 +25,6 @@ Easily deploy Nuxt 3 applications via CDK on AWS including the following feature
 
 This package uses npm package manager. Bun support is experimental and is known to crash on some machines - use with caution.
 
-
 ## Installation
 
 Install the package and its required dependencies:
@@ -33,7 +32,7 @@ Install the package and its required dependencies:
 ```bash
 npm install thunder-so/cdk-nuxt --dev # This forked package
 npm install tsx typescript --dev # This fork uses tsx instead of ts-node
-npm add aws-cdk@2.139.0 --dev # CDK version updated in this fork
+npm install aws-cdk@2.139.0 --dev # CDK version updated in this fork
 ```
 
 Using Bun (experimental):
@@ -69,6 +68,8 @@ yarn add aws-cdk@2.128.0 --dev # CDK cli with this exact version for the deploym
 
 <strike>2. Remove `"type": "module"` from your `package.json` file, if it exists.
    This is required to make the CDK stack work. Click [here](https://github.com/ferdinandfrank/cdk-nuxt/issues/3) for details.</strike>
+
+  Unlike the original package [https://github.com/ferdinandfrank/cdk-nuxt/](https://github.com/ferdinandfrank/cdk-nuxt/), this fork is ESM compliant and works seamlessly with the default settings of Nuxt.
 
 3. [Create an AWS account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/?nc1=h_ls), if you don't have one yet. Then login into the AWS console and note the `Account ID`. You will need it in step 7.
 4. [Create a hosted zone in Route53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/AboutHZWorkingWith.html) for the desired domain, if you don't have one yet.<br/>This is required to create DNS records for the domain to make the Nuxt app publicly available on that domain.<br/>On the hosted zone details you should see the `Hosted zone ID` of the hosted zone. You will need it in step 7.

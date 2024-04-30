@@ -46,11 +46,6 @@ export interface NuxtServerAppStackProps extends NuxtAppStackProps {
     readonly enableApi?: boolean;
 
     /**
-     * Whether to enable reporting of CloudFront access logs via Athena.
-     */
-    readonly enableAccessLogsAnalysis?: boolean;
-
-    /**
      * Array of cookie names to include in the access logs (whitelist).
      */
     readonly accessLogCookies?: string[];

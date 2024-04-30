@@ -1,0 +1,17 @@
+{
+    "name": "cdk-nuxt-assets-cleanup",
+    "version": "0.1.2",
+    "main": "index.js",
+    "license": "UNLICENSED",
+    "private": true,
+    "scripts": {
+      "build": "tsc --project ./tsconfig.json"
+    },
+    "devDependencies": {
+      "@types/node": "^20.12.7",
+      "typescript": "^5.4.5"
+    },
+    "dependencies": {
+      "@aws-sdk/client-s3": "^3.565.0"
+    }
+}
