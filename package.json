@@ -20,7 +20,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "postinstall": "cd ./lib/functions/assets-cleanup && npm run build"
+    "postinstall": "cd ./lib/functions/assets-cleanup && npm ci && tsc --project ./tsconfig.json"
   },
   "devDependencies": {
     "@types/node": "^20.12.2",
