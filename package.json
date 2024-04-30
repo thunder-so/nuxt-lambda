@@ -27,7 +27,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "preinstall": "npx submodules-install"
+    "postinstall": "npx submodules-install"
   },
   "devDependencies": {
     "@types/node": "^20.12.2",
