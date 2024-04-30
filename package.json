@@ -19,7 +19,8 @@
     "cdk-nuxt-destroy-server": "lib/cli/destroy-server.mjs"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "postinstall": "cd ./lib/functions/assets-cleanup && npm run build"
   },
   "devDependencies": {
     "@types/node": "^20.12.2",
