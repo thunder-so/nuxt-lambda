@@ -18,16 +18,8 @@
     "cdk-nuxt-deploy-server": "lib/cli/deploy-server.mjs",
     "cdk-nuxt-destroy-server": "lib/cli/destroy-server.mjs"
   },
-  "submodules": [
-    {
-      "path": "lib/functions/assets-cleanup",
-      "cmd": "npm",
-      "args": ["run build"]
-    }
-  ],
   "scripts": {
-    "build": "tsc",
-    "postinstall": "npx submodules-install"
+    "build": "tsc"
   },
   "devDependencies": {
     "@types/node": "^20.12.2",
@@ -38,7 +30,6 @@
     "aws-cdk": "2.139.0",
     "aws-cdk-lib": "2.139.0",
     "constructs": "^10.3.0",
-    "shelljs": "^0.8.5",
-    "submodules-install": "^1.1.0"
+    "shelljs": "^0.8.5"
   }
 }

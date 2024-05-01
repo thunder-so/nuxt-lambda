@@ -606,7 +606,7 @@ export class NuxtServerAppStack extends Stack {
             runtime: Runtime.NODEJS_20_X,
             architecture: Architecture.ARM_64,
             handler: 'index.handler',
-            code: Code.fromAsset(`${functionDirPath}/build`, {
+            code: Code.fromAsset(`${functionDirPath}/dist`, {
                 exclude: ['*.d.ts']
             }),
             timeout: Duration.minutes(5),
