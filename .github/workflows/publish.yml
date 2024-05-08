@@ -26,7 +26,6 @@ jobs:
           
       - name: Build project
         run: |
-          npm run build
           cd lib/functions/assets-cleanup && npm run build
 
       - name: Publish
