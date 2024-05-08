@@ -1,6 +1,5 @@
-name: Build
+name: Publish
 
-# Build project on pushes
 on:
   push:
     branches:
@@ -18,7 +17,12 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          registry-url: 'https://npm.pkg.github.com'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          generateReleaseNotes: true
 
       - name: Install dependencies
         run: |
@@ -29,3 +33,8 @@ jobs:
         run: |
           npm run build
           cd lib/functions/assets-cleanup && npm run build
+
+      - name: Publish
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

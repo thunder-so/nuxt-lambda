@@ -171,8 +171,8 @@ export class NuxtServerAppStack extends Stack {
         this.createAppPingRule(props);
 
         // Static assets cleanup resources
-        this.cleanupLambdaFunction = this.createCleanupLambdaFunction(props);
-        this.createCleanupTriggerRule();
+        // this.cleanupLambdaFunction = this.createCleanupLambdaFunction(props);
+        // this.createCleanupTriggerRule();
     }
 
     /**
@@ -606,8 +606,8 @@ export class NuxtServerAppStack extends Stack {
             runtime: Runtime.NODEJS_20_X,
             architecture: Architecture.ARM_64,
             handler: 'index.handler',
-            code: Code.fromAsset(`${functionDirPath}/dist`, {
-                exclude: ['*.d.ts']
+            code: Code.fromAsset(`${functionDirPath}`, {
+                exclude: ['*.ts', '*.json', '.gitignore']
             }),
             timeout: Duration.minutes(5),
             memorySize: 128,

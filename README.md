@@ -153,8 +153,8 @@ See https://nuxt.com/docs/guide/directory-structure/server#recipes for details.
 ### enableSitemap?: boolean
 Whether to enable a global Sitemap bucket which is permanently accessible through multiple deployments.
 
-### enableAccessLogsAnalysis?: boolean
-Whether to enable access logs analysis for the Nuxt app's CloudFront distribution via Athena.
+<strike>### enableAccessLogsAnalysis?: boolean
+Whether to enable access logs analysis for the Nuxt app's CloudFront distribution via Athena.</strike>
 
 ### accessLogCookies?: string[]
 An array of cookies to include for reporting in the access logs analysis.
@@ -283,6 +283,7 @@ The following AWS resources will be created by this stack:
 - [EventBridge](https://aws.amazon.com/eventbridge/):
     - A scheduled rule to ping the Nuxt app's Lambda function every 5 minutes in order to keep it warm and to speed up initial SSR requests.
     - A scheduled rule to trigger the cleanup Lambda function for deleting the outdated static assets of the Nuxt app from S3 every tuesday at 03:30 AM GMT.
+
 <strike>- [Athena](https://aws.amazon.com/athena/): A database and table to analyze the access logs of the Nuxt app's CloudFront distribution. Only created if `enableAccessLogsAnalysis` is set to `true`.</strike>
 
 ## Guidelines
