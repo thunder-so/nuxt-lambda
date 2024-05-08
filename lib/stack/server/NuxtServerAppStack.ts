@@ -171,8 +171,8 @@ export class NuxtServerAppStack extends Stack {
         this.createAppPingRule(props);
 
         // Static assets cleanup resources
-        // this.cleanupLambdaFunction = this.createCleanupLambdaFunction(props);
-        // this.createCleanupTriggerRule();
+        this.cleanupLambdaFunction = this.createCleanupLambdaFunction(props);
+        this.createCleanupTriggerRule();
     }
 
     /**
