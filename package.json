@@ -18,9 +18,6 @@
     "cdk-nuxt-deploy-server": "lib/cli/deploy-server.mjs",
     "cdk-nuxt-destroy-server": "lib/cli/destroy-server.mjs"
   },
-  "scripts": {
-    "build": "tsc"
-  },
   "devDependencies": {
     "@types/node": "^20.12.2",
     "tsx": "^4.7.3",

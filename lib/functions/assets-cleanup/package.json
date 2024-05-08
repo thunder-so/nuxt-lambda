@@ -1,8 +1,8 @@
 {
-    "name": "cdk-nuxt-assets-cleanup",
-    "version": "0.1.2",
+    "name": "nuxt-lambda-assets-cleanup",
+    "version": "0.0.1",
     "main": "index.js",
-    "license": "UNLICENSED",
+    "license": "MIT",
     "private": true,
     "scripts": {
       "build": "tsc --project ./tsconfig.json"

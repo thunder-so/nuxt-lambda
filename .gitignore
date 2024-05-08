@@ -9,7 +9,5 @@ cdk.out
 
 # TS build files
 lib/functions/assets-cleanup/*.js
-lib/functions/access-logs-analysis/*/*.js
-lib/stack/**.js
-lib/stack/*/*.js
-index.js
+lib/stack/**/*.js
+.tgz
