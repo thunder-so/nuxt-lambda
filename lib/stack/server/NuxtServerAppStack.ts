@@ -21,7 +21,10 @@ import {
     OriginProtocolPolicy,
     PriceClass,
     SecurityPolicyProtocol,
-    ViewerProtocolPolicy
+    ViewerProtocolPolicy,
+    Function as CloudFrontFunction, 
+    FunctionCode as CloudFrontFunctionCode,
+    FunctionEventType
 } from "aws-cdk-lib/aws-cloudfront";
 import {
     Architecture, 
@@ -139,12 +142,15 @@ export class NuxtServerAppStack extends Stack {
     private appCachePolicy: CachePolicy;
 
     /**
+     * The CloudFront Edge Functions
+     */
+    private cloudFrontFunction: CloudFrontFunction;
+
+    /**
      * The CloudFront distribution to route incoming requests to the Nuxt Lambda function (via the API gateway)
      * or the S3 assets folder (with caching).
-     *
-     * @private
      */
-    private readonly cdn: Distribution;
+    public cdn: Distribution;
 
     constructor(scope: Construct, id: string, props: NuxtServerAppStackProps) {
         super(scope, id, props);
@@ -157,6 +163,17 @@ export class NuxtServerAppStack extends Stack {
         this.cdnAccessIdentity = this.createCdnAccessIdentity();
         this.staticAssetsBucket = this.createStaticAssetsBucket();
 
+        // access logs bucket
+        this.accessLogsBucket =  new Bucket(this, `${this.resourceIdPrefix}-access-logs`, {
+            bucketName: `${this.resourceIdPrefix}-access-logs`,
+            encryption: BucketEncryption.S3_MANAGED,
+            blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
+            objectOwnership: ObjectOwnership.OBJECT_WRITER,
+            enforceSSL: true,
+            removalPolicy: RemovalPolicy.DESTROY,
+            autoDeleteObjects: true,
+        });        
+
         if (props.enableSitemap) {
             this.sitemapBucket = this.createSitemapBucket();
         }
@@ -165,14 +182,74 @@ export class NuxtServerAppStack extends Stack {
         this.apiGateway = this.createApiGateway(props);
         this.httpOrigin = this.createNuxtAppHttpOrigin();
         this.appCachePolicy = this.createNuxtAppCachePolicy(props)
+
+        this.cloudFrontFunction = this.createCloudFrontFunction();
         this.cdn = this.createCloudFrontDistribution(props);
+
         this.configureDeployments();
         this.createDnsRecords(props);
         this.createAppPingRule(props);
 
         // Static assets cleanup resources
-        this.cleanupLambdaFunction = this.createCleanupLambdaFunction(props);
-        this.createCleanupTriggerRule();
+        // this.cleanupLambdaFunction = this.createCleanupLambdaFunction(props);
+        // this.createCleanupTriggerRule();
+    }
+
+        /**
+     * Create a CloudFront Function for SPA URL rewrite
+     * @param props HostingProps
+     * @returns cloudfront function
+     */
+    private createCloudFrontFunction(): CloudFrontFunction {
+      const functionCode = `
+       /**
+        * CloudFront function to redirect incoming requests to their corresponding S3 file.
+        */
+       function handler(event) {
+           // Const and var are not supported
+           var request = event.request;
+           var uri = request.uri;
+
+           // The main entry point
+           if (uri === '/') {
+               request.uri = '/index.html';
+               return request;
+           }
+
+           // The path suffixes that shall redirect to the main entry point
+           var indexPathAliases = ['/', '/index.html'];
+           for (var i = 0; i < indexPathAliases.length; i++) {
+               var alias = indexPathAliases[i];
+               if (uri.endsWith(alias)) {
+                   var host = request.headers.host.value;
+
+                   return {
+                       statusCode: 301,
+                       statusDescription: 'Moved Permanently',
+                       headers: {
+                           "location": {
+                               "value": 'https://' + host + uri.slice(0, -alias.length)
+                           }
+                       }
+                   };
+               }
+           }
+
+           // When the URI is missing a file extension, we assume the main entry file (index.html) for the current path is requested
+           if (!uri.includes('.')) {
+               request.uri += '/index.html';
+           }
+
+           return request;
+       }
+       `;
+
+       const URLRewriteFunction = new CloudFrontFunction(this, `${this.resourceIdPrefix}-URLRewriteFunction`, {
+        code: CloudFrontFunctionCode.fromInline(functionCode),
+        comment: `CloudFront Function: for SPA URL rewrites`,
+      });
+
+      return URLRewriteFunction;
     }
 
     /**
@@ -329,6 +406,7 @@ export class NuxtServerAppStack extends Stack {
             defaultBehavior: this.createNuxtAppRouteBehavior(),
             additionalBehaviors: this.setupCloudFrontRouting(props),
             priceClass: PriceClass.PRICE_CLASS_100, // Use only North America and Europe
+            enableLogging: true,
             logBucket: this.accessLogsBucket,
             logFilePrefix: `${cdnName}-logs`,
             logIncludesCookies: true,
@@ -359,7 +437,13 @@ export class NuxtServerAppStack extends Stack {
             compress: true,
             viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
             originRequestPolicy: undefined,
-            cachePolicy: this.appCachePolicy
+            cachePolicy: this.appCachePolicy,
+            // functionAssociations: [
+            //     ...(this.cloudFrontFunction ? [{
+            //         eventType: FunctionEventType.VIEWER_REQUEST,
+            //         function: this.cloudFrontFunction
+            //     }] : [])
+            // ],
         };
     }
 
